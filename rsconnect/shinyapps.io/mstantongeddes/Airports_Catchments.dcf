@@ -1,0 +1,13 @@
+name: Airports_Catchments
+title: Airports_Catchments
+username: mstantongeddes
+account: mstantongeddes
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 16307588
+bundleId:
+url: https://mstantongeddes.shinyapps.io/Airports_Catchments/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Cirium_Airport2Airport_capacity_2025.xlsx|World Airport Traffic Data.xlsx
