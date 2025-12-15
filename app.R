@@ -7,6 +7,7 @@ library(dplyr)
 library(purrr)
 library(leaflet)
 library(shiny)
+library(renv)
 
 #Prepare data
 
@@ -101,15 +102,15 @@ df_airports_Wscheduled_traffic_FULLJOIN <- full_join(
 glimpse(df_airports_Wscheduled_traffic_FULLJOIN)
 
 df_airports_Wscheduled_traffic_FULLJOIN |> 
-    filter(is.na(TPAX)) #Many aiports which have scheduled seats in Cirium data, but for which PAX data is missing
+    filter(is.na(TPAX)) #Many airports which have scheduled seats in Cirium data, but for which PAX data is missing
 
 df_airports_Wscheduled_traffic_FULLJOIN |> 
     filter(is.na(seats) & TPAX > 0) #There are no airports for which there is missing seat data, but there is TPAX data. 
 #This means that OK to use the left_join dataframe with the basic dataframe coming from Cirium, as it captures all airports for which there is also PAX data
 
-#Back to the anlaysis with the dataframe centred on Cirium Seats by airports dataframe
+#Back to the analysis with the dataframe centred on Cirium Seats by airports dataframe
 
-#Expore the airports with scheduled traffic data
+#Explore the airports with scheduled traffic data
 df_airports_Wscheduled_traffic |> filter(is.na(TPAX))
 df_airports_Wscheduled_traffic |> filter(is.na(seats))
 df_airports_Wscheduled_traffic |> filter(TPAX <1000000 & seats > 692000)
@@ -197,16 +198,20 @@ ui <- fluidPage(
     # Application title
     titlePanel("Airport Catchment Areas - Direct Radius"),
     
+    #Application description
+    
+    
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
+            helpText("This app shows which other EU airports are within the selected radius of EU airports <1 million passengers per year. Each blue circle is an EU airport with <1 million passengers in 2024."),
             numericInput("radius",
                          "Radius in Kilometers:",
                          min = 10,
                          max = 250,
                          value = 100) #100km is 100,000m
         ),
-        
+      
         # Show a plot of the generated distribution
         mainPanel(
             leafletOutput("map", width = "100%", height = 600)
