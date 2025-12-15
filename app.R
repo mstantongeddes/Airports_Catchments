@@ -190,6 +190,22 @@ df_focus_airports_EU$popups <- paste0(
 
 glimpse(df_focus_airports_EU)
 
+#Features for the shiny app
+
+help_text_content <- HTML(paste0(
+  "<b>Instructions:</b> This app shows which other EU airports are within the selected radius of EU airports <1 million passengers per year.<br><br>",
+
+    "&#9679; Each blue circle is an EU airport with <1 million passengers in 2024.<br>",
+    
+    "&#9679; Change the size of the blue circle by selecting a different <b> Radius in Kilometers <b>.<br>",
+  
+    "&#9679; Every yellow dot is an airport (of any size) within 100km of the airport at the centre of the blue circle .<br>",
+  
+    "&#9679; Change the <b> Annual Passenger Volume for Lower Threshold <b> value to remove blue circles around airports smaller than the selected value.<br>",
+  
+    "&#8226; For example, setting the value at 250,000 will remove the blue circles from airports with <250,000 annual passengers."
+))
+
 ############APP#############
 
 # Define UI for application that draws a histogram
@@ -204,14 +220,19 @@ ui <- fluidPage(
     # Sidebar with a slider input for number of bins 
     sidebarLayout(
         sidebarPanel(
-            helpText("This app shows which other EU airports are within the selected radius of EU airports <1 million passengers per year. Each blue circle is an EU airport with <1 million passengers in 2024."),
+            helpText(help_text_content),
             numericInput("radius",
                          "Radius in Kilometers:",
                          min = 10,
                          max = 250,
-                         value = 100) #100km is 100,000m
+                         value = 100), #100km is 100,000m
+            numericInput("lower_threshold",
+                         "Annual Passenger Volume for Lower Threshold",
+                         min = 0,
+                         max = 999,999,
+                         value = 1000)
         ),
-      
+        
         # Show a plot of the generated distribution
         mainPanel(
             leafletOutput("map", width = "100%", height = 600)
@@ -226,6 +247,7 @@ server <- function(input, output) {
     output$map <- renderLeaflet({
         
         df_focus_airports_EU_with_radius <- df_focus_airports_EU |>
+            filter(TPAX > input$lower_threshold) |>
             dplyr::mutate(
                 radius = input$radius
             )
